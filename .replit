@@ -26,3 +26,7 @@ waitForPort = 5000
 
 [deployment]
 run = ["sh", "-c", "npm install express cors puppeteer && node server.js"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80

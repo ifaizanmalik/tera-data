@@ -23,25 +23,27 @@ async function extractTeraboxInfo(url) {
         browser = await createBrowser();
         page = await createMobilePage(browser);
 
-        // Set longer timeout for slow networks
-        page.setDefaultTimeout(30000);
-        page.setDefaultNavigationTimeout(30000);
+        // Set shorter timeout for faster response
+        page.setDefaultTimeout(15000);
+        page.setDefaultNavigationTimeout(15000);
 
-        // Navigate to the URL
+        // Navigate to the URL with minimal wait
         console.log('Navigating to URL...');
         await page.goto(url, { 
-            waitUntil: 'networkidle2',
-            timeout: 30000 
+            waitUntil: 'domcontentloaded',
+            timeout: 15000 
         });
 
         // Wait for the page to load and JavaScript to execute
         console.log('Waiting for dynamic content to load...');
-        await page.waitForTimeout(3000);
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
         // Wait for the specific div with size information to appear
         // The target selector: div[data-v-5380f836].size or similar variations
+        console.log('Page loaded, searching for file information...');
+        
         let sizeInfo = null;
-        const maxRetries = 10;
+        const maxRetries = 5;
         let retryCount = 0;
 
         while (!sizeInfo && retryCount < maxRetries) {
@@ -52,13 +54,22 @@ async function extractTeraboxInfo(url) {
                     'div.size',
                     '.size',
                     '[class*="size"]',
-                    'div[data-v-5380f836]'
+                    'div[data-v-5380f836]',
+                    '.file-size',
+                    '.video-info',
+                    '.media-info'
                 ];
+
+                console.log(`Attempt ${retryCount + 1}/${maxRetries}: Searching with ${selectors.length} selectors...`);
 
                 for (const selector of selectors) {
                     const elements = await page.$$(selector);
+                    console.log(`Selector "${selector}" found ${elements.length} elements`);
+                    
                     for (const element of elements) {
                         const text = await page.evaluate(el => el.textContent?.trim(), element);
+                        console.log(`Element text: "${text}"`);
+                        
                         if (text && (text.includes('MB') || text.includes('GB') || text.includes('KB')) && text.includes(':')) {
                             sizeInfo = text;
                             console.log(`Found size info with selector "${selector}": ${sizeInfo}`);
@@ -69,15 +80,15 @@ async function extractTeraboxInfo(url) {
                 }
 
                 if (!sizeInfo) {
-                    console.log(`Retry ${retryCount + 1}/${maxRetries}: Size info not found, waiting...`);
-                    await page.waitForTimeout(2000);
+                    console.log(`Attempt ${retryCount + 1}/${maxRetries}: Size info not found, waiting 1s...`);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                     retryCount++;
                 }
             } catch (error) {
-                console.log(`Retry ${retryCount + 1}/${maxRetries}: Error finding size info:`, error.message);
+                console.log(`Attempt ${retryCount + 1}/${maxRetries}: Error finding size info:`, error.message);
                 retryCount++;
                 if (retryCount < maxRetries) {
-                    await page.waitForTimeout(2000);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                 }
             }
         }

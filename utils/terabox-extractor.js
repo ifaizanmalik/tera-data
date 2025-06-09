@@ -13,10 +13,11 @@ async function extractTeraboxInfo(url) {
             throw new Error('Invalid URL provided');
         }
 
-        // Check if it's a Terabox URL
-        if (!url.includes('terabox.com') && !url.includes('1024terabox.com')) {
-            throw new Error('URL must be a valid Terabox link');
-        }
+        // Validate URL contains "tera" (case-insensitive)
+if (!url || typeof url !== 'string' || !url.toLowerCase().includes('tera')) {
+    throw new Error('URL must be a valid Terabox or related link containing "tera"');
+}
+
 
         console.log(`Extracting info from: ${url}`);
         

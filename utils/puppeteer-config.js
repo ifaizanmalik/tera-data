@@ -8,6 +8,7 @@ async function createBrowser() {
     
     const browserOptions = {
         headless: 'new',
+        executablePath: '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
@@ -20,19 +21,12 @@ async function createBrowser() {
             '--disable-web-security',
             '--disable-features=VizDisplayCompositor',
             '--memory-pressure-off',
-            '--max_old_space_size=4096'
-        ]
-    };
-
-    // Additional configuration for Render or other cloud platforms
-    if (isProduction) {
-        browserOptions.args.push(
+            '--max_old_space_size=4096',
             '--single-process',
             '--no-zygote',
             '--disable-extensions'
-        );
-        browserOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome-stable';
-    }
+        ]
+    };
 
     try {
         const browser = await puppeteer.launch(browserOptions);

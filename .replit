@@ -2,6 +2,7 @@ modules = ["nodejs-20"]
 
 [nix]
 channel = "stable-24_05"
+packages = ["chromium", "glib", "nss", "nspr", "atk", "at-spi2-atk", "cups", "dbus", "gdk-pixbuf", "gtk3", "libdrm", "mesa", "pango"]
 
 [workflows]
 runButton = "Project"

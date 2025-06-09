@@ -7,8 +7,8 @@ async function createBrowser() {
     const isProduction = process.env.NODE_ENV === 'production';
     
     const browserOptions = {
-        headless: 'new',
-        executablePath: '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
+        // Remove the fixed executablePath so Puppeteer uses its default Chromium
+    // executablePath: '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',

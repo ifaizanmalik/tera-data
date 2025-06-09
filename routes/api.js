@@ -3,6 +3,22 @@ const { extractTeraboxInfo } = require('../utils/terabox-extractor');
 
 const router = express.Router();
 
+// Simple test endpoint for browser verification
+router.get('/test', (req, res) => {
+    res.json({
+        success: true,
+        message: 'API routes are working correctly',
+        timestamp: new Date().toISOString(),
+        availableEndpoints: [
+            'GET /?url=<terabox_url> - Extract file info',
+            'POST /batch - Batch processing',
+            'GET /docs - API documentation',
+            'GET /health - Health check',
+            'GET /test - This test endpoint'
+        ]
+    });
+});
+
 /**
  * Main API endpoint to extract Terabox file information
  * GET /?url=https://1024terabox.com/s/1Pc4wBeMRpG-ePB1DI_kkPw

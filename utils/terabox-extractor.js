@@ -29,10 +29,16 @@ async function extractTeraboxInfo(url) {
 
         // Navigate to the URL with minimal wait
         console.log('Navigating to URL...');
-        await page.goto(url, { 
-            waitUntil: 'domcontentloaded',
-            timeout: 15000 
-        });
+        try {
+            await page.goto(url, { 
+                waitUntil: 'domcontentloaded',
+                timeout: 10000 
+            });
+            console.log('Page navigation completed successfully');
+        } catch (navError) {
+            console.log('Navigation timeout, but continuing with extraction...');
+            // Sometimes the page loads but navigation times out, so we continue
+        }
 
         // Wait for the page to load and JavaScript to execute
         console.log('Waiting for dynamic content to load...');
